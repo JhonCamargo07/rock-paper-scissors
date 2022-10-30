@@ -1,6 +1,9 @@
 import random
+from game_logic import get_winner
 
 MIN_GAMES = 3
+
+OPTIONS = ['PIEDRA', 'PAPEL', 'TIJERA']
 
 phrases_welcome = ['\u00bfCrees poder ganarle al destino? ... Prob\u00e9moslo',
                    'El destino hoy no est\u00e1 de tu lado \u00bfo si?',
@@ -25,7 +28,6 @@ def print_welcome():
     message_welcome = ' Bienvenido a Piedra Papel o Tijera '
     print(message_welcome.center(len(message_welcome) + 50, '='))
     print(random.choice(phrases_welcome))
-    print()
 
 
 def print_farewell():
@@ -43,23 +45,37 @@ def print_creation_information():
     print(''.center(len(by) + 30, '*'))
 
 
+def is_user_want_continue_playing():
+    print('\n\u00bfQuieres jugar de nuevo?')
+    user_choice = input('Escriba "si" o "no": ').upper()
+    if user_choice != "SI":
+        return False
+    return True
+
+
 def get_option_user():
-    print(f'\nElige una de las siguientes opciones \n1. Piedra \n2. Papel \n3. Tijera')
-    choice = input('¿Cúal es tu opcion? ')
+    random.shuffle(OPTIONS)
+    print(f'\nElige una de las siguientes opciones: \n1. {OPTIONS[0]} \n2. {OPTIONS[1]} \n3. {OPTIONS[2]}')
+    choice = input('\u00bfCúal es tu eleccion? ')
 
     if not choice.isnumeric() or not 0 < int(choice) <= 3:
         print('Parece que escogiste mal, por favor...')
         return get_option_user()
 
-    return choice
+    choice = int(choice)
 
+    if choice == 1:
+        choice = OPTIONS[0]
+    elif choice == 2:
+        choice = OPTIONS[1]
+    elif choice == 3:
+        choice = OPTIONS[2]
+    else:
+        return get_option_user()
 
-def is_user_want_continue_playing():
-    print('\n¿Quieres jugar de nuevo?')
-    user_choice = input('Escriba "si" o "no": ').upper()
-    if user_choice != "SI":
-        return False
-    return True
+    print(random.choice(phrases_option))
+
+    get_winner(option_user=choice)
 
 
 def game_reload():
