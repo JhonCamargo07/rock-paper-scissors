@@ -1,7 +1,9 @@
 import random
-from game_logic import get_winner
+from game_logic import get_winner_and_return_game_round
 
 MIN_GAMES = 3
+
+game_data = []
 
 OPTIONS = ['PIEDRA', 'PAPEL', 'TIJERA']
 
@@ -45,12 +47,26 @@ def print_creation_information():
     print(''.center(len(by) + 30, '*'))
 
 
-def is_user_want_continue_playing():
-    print('\n\u00bfQuieres jugar de nuevo?')
+def print_game_data():
+    total_game_wom = 0
+    for data in game_data:
+        print(f'Juego #{data["total_games"]}\n\tFigura jugador: {data["option_user"]}\n\tFigura computador: {data["option_computer"]}\n\tFigura ganadora: {data["winner"]}\n\t\u00bfQui\u00e9n gan\u00f3?: {data["round_winner"]}')
+        if data["is_user_winner"]:
+            total_game_wom += 1
+
+    print(f'\nTotal juego ganados {total_game_wom}/{len(game_data)}')
+
+
+def is_user_want_continue_playing(message):
+    print(f'\n{message}')
     user_choice = input('Escriba "si" o "no": ').upper()
     if user_choice != "SI":
         return False
     return True
+
+
+def game_reset():
+    game_data.clear()
 
 
 def get_option_user():
@@ -75,7 +91,7 @@ def get_option_user():
 
     print(random.choice(phrases_option))
 
-    get_winner(option_user=choice)
+    game_data.append(get_winner_and_return_game_round(option_user=choice, games_played=len(game_data)))
 
 
 def game_reload():
@@ -85,6 +101,11 @@ def game_reload():
             print(random.choice(phrases_continue))
         get_option_user()
         games_played += 1
+    else:
+        if is_user_want_continue_playing('\u00bfQuieres seguir jugando en esta misma partida?'):
+            return game_reload()
+        print_game_data()
+        game_reset()
 
 
 if __name__ == '__main__':
@@ -92,7 +113,7 @@ if __name__ == '__main__':
     game_reload()
     continue_playing = True
     while continue_playing:
-        if not is_user_want_continue_playing():
+        if not is_user_want_continue_playing('\u00bfQuieres jugar una nueva partida?'):
             print_creation_information()
             break
         game_reload()
